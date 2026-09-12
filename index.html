@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mp_sales Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #fff; padding: 20px; margin: 0; }
+        .card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: none; box-sizing: border-box; }
+        button { background: #6366f1; color: white; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>mp_sales Панель селлера</h2>
+    <div class="card">
+        <label>Ключевое слово для SEO:</label>
+        <input type="text" id="keyword" placeholder="Например: рюкзак городской">
+        <button onclick="generateSEO()">Сгенерировать карточку</button>
+    </div>
+    <div id="result" class="card" style="display:none;"></div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function generateSEO() {
+            let kw = document.getElementById('keyword').value;
+            let res = document.getElementById('result');
+            res.style.display = 'block';
+            res.innerHTML = `<strong>Результат для mp_sales:</strong> ${kw}<br>SEO-описание успешно сгенерировано!`;
+        }
+    </script>
+</body>
+</html>
