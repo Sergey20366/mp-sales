@@ -3,33 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mp_sales Mini App</title>
+    <title>mp_sales — Кабинет селлера</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: #fff; padding: 20px; margin: 0; }
-        .card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: none; box-sizing: border-box; }
-        button { background: #6366f1; color: white; font-weight: bold; cursor: pointer; }
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131c2e;
+            --accent-wb: #8b5cf6;
+            --accent-ozon: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-wb), var(--accent-ozon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            font-size: 11px;
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-wb);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent-wb);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            background: linear-gradient(135deg, var(--accent-wb), var(--accent-ozon));
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            transition: opacity 0.2s;
+        }
+
+        button:active {
+            opacity: 0.9;
+        }
+
+        #result {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+
+        .seo-box {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            border: 1px dashed var(--border-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
-    <h2>mp_sales Панель селлера</h2>
-    <div class="card">
-        <label>Ключевое слово для SEO:</label>
-        <input type="text" id="keyword" placeholder="Например: рюкзак городской">
-        <button onclick="generateSEO()">Сгенерировать карточку</button>
+
+    <div class="header">
+        <div class="logo">mp_sales</div>
+        <div class="badge">PRO v1.0</div>
     </div>
-    <div id="result" class="card" style="display:none;"></div>
+
+    <div class="card">
+        <label>🔍 Введите ключевое слово или товар:</label>
+        <input type="text" id="keyword" placeholder="Например: рюкзак городской водонепроницаемый">
+        <button onclick="generateSEO()">Сгенерировать SEO-карточку</button>
+    </div>
+
+    <div id="result" class="card">
+        <div class="result-title">✨ Результат оптимизации</div>
+        <div class="seo-box" id="seoResultText"></div>
+    </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
         function generateSEO() {
-            let kw = document.getElementById('keyword').value;
-            let res = document.getElementById('result');
-            res.style.display = 'block';
-            res.innerHTML = `<strong>Результат для mp_sales:</strong> ${kw}<br>SEO-описание успешно сгенерировано!`;
+            let kw = document.getElementById('keyword').value.trim();
+            let resBlock = document.getElementById('result');
+            let resText = document.getElementById('seoResultText');
+
+            if(!kw) {
+                alert('Пожалуйста, введите ключевое слово!');
+                return;
+            }
+
+            resBlock.style.display = 'block';
+            resText.innerHTML = `<strong>Запрос:</strong> ${kw}<br><br>` +
+                                `🚀 <strong>SEO-заголовок:</strong> ${kw} (Трендовая модель 2026)<br>` +
+                                `📋 <strong>Описание:</strong> Стильный и практичный ${kw} идеально подойдет для повседневного использования. Высокое качество материалов, износостойкость. Популярный тренд на Wildberries и Ozon!`;
         }
     </script>
 </body>
